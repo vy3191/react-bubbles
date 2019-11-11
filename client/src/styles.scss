@@ -64,7 +64,9 @@ form {
   margin-top: 60px;
   display: flex;
   flex-direction: column;
-
+  align-items: center;
+  margin: 60px auto;
+  height: 590px;
   legend {
     padding-left: 40px;
     font-weight: bold;
@@ -76,7 +78,7 @@ form {
   label {
     display: flex;
     justify-content: space-between;
-    padding: 4px 36px 4px 40px;
+    padding: 4px 36px 4px 4px;
   }
 
   input {

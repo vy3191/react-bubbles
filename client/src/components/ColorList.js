@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import {axiosWithAuth} from '../Auth/Api';
 
 const initialColor = {
   color: "",
   code: { hex: "" }
 };
 
-const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
+const ColorList = (props) => {
+  const { colors, updateColors} = props;
+  
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -16,17 +18,34 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
-  const saveEdit = e => {
+  const saveEdit = (e,id) => {
     e.preventDefault();
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+    console.log(id)
+    const updatedColors = colors.filter( color => color.id != id);
+    axiosWithAuth().put(`/api/colors/${id}`,colorToEdit )
+                 .then( res => {
+                    console.log(res);
+                    setColorToEdit(res.data)
+                    updateColors([...updatedColors, colorToEdit])
+                    setEditing(!editing);
+                 })
+                 .catch( err => {
+                    console.log(err);
+                 })   
   };
 
-  const deleteColor = color => {
-    // make a delete request to delete this color
+  const deleteColor = id => {      
+    
+     axiosWithAuth().delete(`/api/colors/${id}`)
+                  .then( response => {
+                     console.log(response)
+                     updateColors(colors.filter( color => color.id != id));
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  })
   };
-
+  console.log('after click', colorToEdit.id);
   return (
     <div className="colors-wrap">
       <p>colors</p>
@@ -36,7 +55,7 @@ const ColorList = ({ colors, updateColors }) => {
             <span>
               <span className="delete" onClick={e => {
                     e.stopPropagation();
-                    deleteColor(color)
+                    deleteColor(color.id)
                   }
                 }>
                   x
@@ -51,7 +70,7 @@ const ColorList = ({ colors, updateColors }) => {
         ))}
       </ul>
       {editing && (
-        <form onSubmit={saveEdit}>
+        <form onSubmit={(e) => saveEdit(e,colorToEdit.id)}>
           <legend>edit color</legend>
           <label>
             color name:
