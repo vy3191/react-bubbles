@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import axios from "axios";
+// import axios from "axios";
+import {axiosWithAuth} from '../Auth/Api';
 
 const initialColor = {
   color: "",
   code: { hex: "" }
 };
 
-const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
+const ColorList = (props) => {
+  const { colors, updateColors} = props;
+  
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
 
@@ -16,8 +18,17 @@ const ColorList = ({ colors, updateColors }) => {
     setColorToEdit(color);
   };
 
-  const saveEdit = e => {
+  const saveEdit = (e,id) => {
     e.preventDefault();
+    console.log(id)
+    axiosWithAuth().put(`/api/colors/${id}`,colorToEdit )
+                 .then( res => {
+                    console.log(res);
+                    setColorToEdit(res.data)
+                 })
+                 .catch( err => {
+                    console.log(err);
+                 })
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
@@ -26,7 +37,7 @@ const ColorList = ({ colors, updateColors }) => {
   const deleteColor = color => {
     // make a delete request to delete this color
   };
-
+  console.log('after click', colorToEdit.id);
   return (
     <div className="colors-wrap">
       <p>colors</p>
@@ -51,7 +62,7 @@ const ColorList = ({ colors, updateColors }) => {
         ))}
       </ul>
       {editing && (
-        <form onSubmit={saveEdit}>
+        <form onSubmit={(e) => saveEdit(e,colorToEdit.id)}>
           <legend>edit color</legend>
           <label>
             color name:

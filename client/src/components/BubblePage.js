@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {axiosWithAuth} from '../Auth/Api';
+import {withRouter} from 'react-router-dom';
 import axios from "axios";
 
 import Bubbles from "./Bubbles";
@@ -28,4 +29,4 @@ const BubblePage = () => {
   );
 };
 
-export default BubblePage;
+export default withRouter(BubblePage);
