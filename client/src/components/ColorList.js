@@ -21,23 +21,25 @@ const ColorList = (props) => {
   const saveEdit = (e,id) => {
     e.preventDefault();
     console.log(id)
+    const updatedColors = colors.filter( color => color.id != id);
     axiosWithAuth().put(`/api/colors/${id}`,colorToEdit )
                  .then( res => {
                     console.log(res);
                     setColorToEdit(res.data)
-                    props.history.push('/bubbles-page');
+                    updateColors([...updatedColors, colorToEdit])
+                    setEditing(!editing);
                  })
                  .catch( err => {
                     console.log(err);
                  })   
   };
 
-  const deleteColor = id => {
-       
-     alert('working',id)
+  const deleteColor = id => {      
+    
      axiosWithAuth().delete(`/api/colors/${id}`)
                   .then( response => {
                      console.log(response)
+                     updateColors(colors.filter( color => color.id != id));
                   })
                   .catch(err => {
                     console.log(err);
