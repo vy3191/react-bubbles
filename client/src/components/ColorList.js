@@ -25,6 +25,7 @@ const ColorList = (props) => {
                  .then( res => {
                     console.log(res);
                     setColorToEdit(res.data)
+                    props.history.push('/bubbles-page');
                  })
                  .catch( err => {
                     console.log(err);
@@ -36,6 +37,15 @@ const ColorList = (props) => {
 
   const deleteColor = color => {
     // make a delete request to delete this color
+    
+     alert('working',color.id)
+     axiosWithAuth().delete(`/api/colors/${color.id}`)
+                  .then( response => {
+                     console.log(response)
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  })
   };
   console.log('after click', colorToEdit.id);
   return (
