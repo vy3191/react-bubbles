@@ -29,17 +29,13 @@ const ColorList = (props) => {
                  })
                  .catch( err => {
                     console.log(err);
-                 })
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
+                 })   
   };
 
-  const deleteColor = color => {
-    // make a delete request to delete this color
-    
-     alert('working',color.id)
-     axiosWithAuth().delete(`/api/colors/${color.id}`)
+  const deleteColor = id => {
+       
+     alert('working',id)
+     axiosWithAuth().delete(`/api/colors/${id}`)
                   .then( response => {
                      console.log(response)
                   })
@@ -57,7 +53,7 @@ const ColorList = (props) => {
             <span>
               <span className="delete" onClick={e => {
                     e.stopPropagation();
-                    deleteColor(color)
+                    deleteColor(color.id)
                   }
                 }>
                   x
