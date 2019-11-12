@@ -9,14 +9,35 @@ const initialColor = {
 
 const ColorList = (props) => {
   const { colors, updateColors} = props;
-  
+  const [newColor, setNewColor] = useState({color:"", hex:""});
   const [editing, setEditing] = useState(false);
+  const [addColorFlag, setAddColorFlag] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
-
+ 
+  const handleChange = (e) => {
+     setNewColor({...newColor, [e.target.name]:e.target.value});
+  }
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
   };
+
+  const handleSubmit = (event) => {
+     event.preventDefault();
+     const code = {hex:newColor.hex}
+     const color = {color:newColor.color, code:code}
+     axiosWithAuth().post(`/api/colors`, color)
+                    .then(res => {
+                       console.log(res.data)
+                       setNewColor({color:"", hex:""})
+                       updateColors([...colors, color]);
+                       setAddColorFlag(!addColorFlag);
+                    })
+                    .catch(err => {
+                      console.log(err)
+                    });
+
+  }
 
   const saveEdit = (e,id) => {
     e.preventDefault();
@@ -48,7 +69,8 @@ const ColorList = (props) => {
   console.log('after click', colorToEdit.id);
   return (
     <div className="colors-wrap">
-      <p>colors</p>
+      <p>colors</p>{" "}{" "}<button style={{width: "50%"}}
+                             onClick={() => setAddColorFlag(!addColorFlag)}>Add Colors</button>
       <ul>
         {colors.map(color => (
           <li key={color.color} onClick={() => editColor(color)}>
@@ -100,7 +122,29 @@ const ColorList = (props) => {
         </form>
       )}
       <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
+      {addColorFlag && (
+        <form onSubmit={handleSubmit}>
+          <legend>Add Your color</legend>
+          <label>Color:
+            <input name="color"
+            onChange={handleChange}  
+            value={newColor.color}
+            placeholder="color"
+            required />
+          </label>
+          <label>Hex:
+            <input name="hex"
+             onChange={handleChange}
+             value={newColor.hex}
+             placeholder="Hex"
+             required />
+          </label>
+          <div className="button-row">
+            <button type="submit">Add</button>{" "}
+            <button onClick={() => setAddColorFlag(!addColorFlag)}>cancel</button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
